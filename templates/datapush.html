@@ -1,0 +1,25 @@
+{% extends "new_base.html" %}
+
+{% block leftnav %}
+    {% for ll in leftnavlist %}
+        {% if ll['url']=='/datapush' %}
+            <li class="active">
+        {% else %}
+            <li class="">
+
+        {% endif %}
+            <a href={{ll['url']}} >
+            <i class="menu-icon fa {{ll['ico']}}"></i>
+            <span class="menu-text"> {{ll['name']}} </span>
+        </a>
+
+        <b class="arrow"></b>
+    </li>
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+<h1>Hi, {{title}}!</h1>
+
+{% endblock %}
+

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="cn">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta charset="utf-8" />
+		<title>test</title>
+
+		<meta name="description" content="frequently asked questions using tabs and accordions" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+		<!-- bootstrap & fontawesome -->
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/static/font-awesome/4.5.0/css/font-awesome.min.css" />
+
+		<!-- page specific plugin styles -->
+
+		<!-- text fonts -->
+		<link rel="stylesheet" href="/static/css/fonts.googleapis.com.css" />
+
+
+        <link rel="stylesheet" href="/static/css/jquery.dataTables.min.css" />
+
+		<!-- inline styles related to this page -->
+ 		<script src="/static/js/jquery-2.1.4.min.js"></script>
+        <script src="/static/js/bootstrap.min.js"></script>
+        <script src="/static/js/jquery.dataTables.min.js"></script>
+        <script src="/static/js/vue.js"></script>
+
+	</head>
+
+    <body>
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+    {{ wtf.quick_form(form, enctype="multipart/form-data") }}
+{% endblock page_content %}
+
+    <table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>tagname</th>
+                <th>tagdesc</th>
+                <th>fc</th>
+                <th>reg</th>
+                <th>datatype</th>
+            </tr>
+        </thead>
+    </table>
+<button id="getdata">get_tabledata</button><button id="downloadtable">get_tagtable</button>
+<script type="text/javascript">
+//获取所有的datatables数据
+function getAllDatatableData(oTableLocal)
+{
+   var aReturn =new Array();
+   var aTrs = oTableLocal.fnGetNodes();
+   for(var i=0; i<aTrs.length;i++){
+      aReturn.push(oTableLocal.fnGetData(aTrs[i]));
+   }
+   return aReturn;
+}
+
+$(document).ready(function() {
+    var tagdata = {{ newtags|safe }};
+        console.log(tagdata);
+    $('#example').DataTable( {
+        "processing": true,
+        data: tagdata.tags,
+        "columns": [
+            { "data": "tagname" },
+            { "data": "tagdesc" },
+            { "data": "fc" },
+            { "data": "reg" },
+            { "data": "datatype" },
+        ]
+    } );
+
+    var table = $('#example').DataTable();
+    table.on( 'draw', function () {
+        console.log( 'Table redrawn' );
+    } );
+
+	$('#getdata').on( 'click', function () {
+	    var alldata=$('#example').dataTable().fnGetData();//获取表格所有数据
+        console.log(alldata);
+	} );
+
+	$('#downloadtable').on( 'click', function () {
+        var devname = "dfg234d13wqs";
+         location.href = "/downtable/"+devname;
+	} );
+
+} );
+</script>
+
+</body>
+</html>

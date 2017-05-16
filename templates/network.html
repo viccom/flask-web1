@@ -1,0 +1,77 @@
+{% extends "new_base.html" %}
+
+{% block mystyle %}
+	<style>
+		{% include "devpool.css" %}
+	</style>
+    <link rel="stylesheet" href="/static/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="/static/css/fileinput.min.css" />
+{% endblock %}
+{% block myscript %}
+    <script src="/static/js/jquery.dataTables.min.js"></script>
+    <script src="/static/js/vue.js"></script>
+    <script src="/static/js/fileinput.min.js"></script>
+{% endblock %}
+
+{% block leftnav %}
+    {% for ll in leftnavlist %}
+        {% if ll['url']=='/network' %}
+            <li class="active">
+        {% else %}
+            <li class="">
+
+        {% endif %}
+        <a href={{ll['url']}} >
+            <i class="menu-icon fa {{ll['ico']}}"></i>
+            <span class="menu-text"> {{ll['name']}} </span>
+        </a>
+
+        <b class="arrow"></b>
+    </li>
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    <div class="col-xs-12 col-sm-12 widget-container-col" id="widget-container-col-2">
+        <div class="widget-box widget-color-grey" id="widget-box-2">
+
+            <div>
+            <table id="example"  class="display responsive nowrap" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>tagname</th>
+                        <th>tagdesc</th>
+                        <th>fc</th>
+                        <th>reg</th>
+                        <th>datatype</th>
+                    </tr>
+                </thead>
+
+            </table>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+            <form class="col-xs-12" action="network" method="POST" enctype="multipart/form-data">
+                <div class="col-xs-6 col-sm-6"><input type="file" title="Search for a file to add 1" class="btn-primary" name="data" id="fileupload">  </div>
+
+                <div class="col-xs-2 col-sm-2"><input type="submit" value="Upload"></div>
+                <div class="col-xs-2 col-sm-2"><button id="getdata">get_tabledata</button></div>
+                <div class="col-xs-2 col-sm-2"><button id="downloadtable">get_tagtable</button></div>
+            </form>
+            </div>
+            <p><input type="button" id="upJQuery" value="用jQuery上传"></p>
+        </div>
+
+    </div>
+
+            <!-- content start -->
+
+
+
+
+
+
+
+        <!-- content end -->
+{% include 'network.js' %}
+{% endblock %}
+

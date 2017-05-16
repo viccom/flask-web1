@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 规则不包含的默认表示符合规则 -->
+<RuleMap>
+	<!--  -->
+	<!--  -->
+	
+	<Basic id="Basic">
+		<dev_type>行业标准</dev_type>
+		<dev_manufacturer>modbusrtu</dev_manufacturer>
+		<dev_model>modbusrtu</dev_model>
+	</Basic>
+	
+	<Config id="Protocol">
+		<Protocol_Name>modbusrtu</Protocol_Name>
+		<Protocol_ver>1.0</Protocol_ver>
+	</Config>
+	
+	<extend_parameter id="1">
+		<name>参数1</name>
+		<parameter>默认值</parameter>
+	</extend_parameter>
+	
+	<extend_parameter id="2">
+		<name>参数2</name>
+		<parameter>默认值</parameter>
+	</extend_parameter>
+	
+	<extend_parameter id="3">
+		<name>参数3</name>
+		<parameter>默认值</parameter>
+	</extend_parameter>
+</RuleMap>

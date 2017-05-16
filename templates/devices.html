@@ -1,0 +1,23 @@
+{% for dev in devs %}
+
+    <div class="col-xs-6 col-sm-4 col-md-3" id="devcontainer">
+        <div class="my_float_div hidden" data-devid="{{ dev.dev_id}}"><i class="ace-icon fa fa-trash fa-lg red"></i></div>
+        <div class="thumbnail search-thumbnail"  data-devid="{{ dev.dev_id}}">
+
+            <div class="caption">
+                <div class="clearfix">
+                    <span class="pull-right label label-grey info-label">{{ dev.devinfo.Protocol_paramter.Protocol_Name}}</span>
+
+                    <div class="pull-left bigger-110">
+                        <p>{{ dev.devinfo.basic_info.dev_manufacturer}}</p>
+                    </div>
+                </div>
+
+                <h3 class="search-title">
+                    <a href="#" class="blue">{{ dev.devinfo.basic_info.dev_type}}</a>
+                </h3>
+                <p>{{ dev.devinfo.basic_info.dev_model}}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}

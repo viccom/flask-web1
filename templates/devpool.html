@@ -1,0 +1,38 @@
+{% extends "new_base.html" %}
+{% block mystyle %}
+	<style>
+		{% include "devpool.css" %}
+	</style>
+    <link rel="stylesheet" href="/static/css/jquery.dataTables.min.css" />
+
+
+{% endblock %}
+{% block myscript %}
+    <script src="/static/js/jquery.dataTables.min.js"></script>
+    <script src="/static/js/vue.js"></script>
+
+{% endblock %}
+
+{% block leftnav %}
+    {% for ll in leftnavlist %}
+        {% if ll['url']=='/devpool' %}
+            <li class="active">
+        {% else %}
+            <li class="">
+
+        {% endif %}
+                <a href={{ll['url']}} >
+            <i class="menu-icon fa {{ll['ico']}}"></i>
+            <span class="menu-text"> {{ll['name']}} </span>
+        </a>
+
+        <b class="arrow"></b>
+    </li>
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    {% include 'devpool_main.html' %}
+    {% include 'devpool_main.js' %}
+{% endblock %}
+
