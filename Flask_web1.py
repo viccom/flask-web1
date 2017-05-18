@@ -7,14 +7,13 @@ from wtforms import SubmitField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_bootstrap import Bootstrap
 from werkzeug.utils import secure_filename
-import xlrd,xlwt,json,redis,os,sys,shutil
+import xlrd, xlwt, json, redis, os, sys, shutil
 import xml.dom.minidom
 
 pool0 = redis.ConnectionPool(host='127.0.0.1', port='6379', db=0)
 hr0 = redis.Redis(connection_pool=pool0)
 pool1 = redis.ConnectionPool(host='127.0.0.1', port='6379', db=1)
 hr1 = redis.Redis(connection_pool=pool1)
-
 
 app = Flask(__name__)
 # 新建一个set用于设置文件类型、过滤等
@@ -23,36 +22,31 @@ set_myfile = UploadSet('myfile')  # mypic
 # UPLOADED_xxxxx_DEST, xxxxx部分就是定义的set的名称, mypi, 下同
 uploadpath = './tmp/xslx'
 app.config['UPLOADED_MYFILE_DEST'] = uploadpath
-
 # mypic 允许存储的类型, IMAGES为预设的 tuple('jpg jpe jpeg png gif svg bmp'.split())
 app.config['UPLOADED_MYFILE_ALLOW'] = DEFAULTS
-
 app.static_folder
 
 # 把刚刚app设置的config注册到set_mypic
 configure_uploads(app, set_myfile)
-
 app.config['SECRET_KEY'] = 'xxxxx'
 path = sys.path[0]
-print(path)
 
 os.chdir(path)
 
-
 leftnavlist = [{'ico': 'fa-tachometer', 'name': '控制台', 'url': '/'}, {'ico': 'fa-paw', 'name': '设备池', 'url': '/devpool'},
-	{'ico': 'fa-cogs', 'name': '采集服务', 'url': '/acquisition'}, {'ico': 'fa-upload', 'name': '数据推送', 'url': '/datapush'},
-	{'ico': 'fa-tasks', 'name': '网络配置', 'url': '/network'}, ]
+               {'ico': 'fa-cogs', 'name': '采集服务', 'url': '/acquisition'},
+               {'ico': 'fa-upload', 'name': '数据推送', 'url': '/datapush'},
+               {'ico': 'fa-tasks', 'name': '网络配置', 'url': '/network'}, ]
+
 
 @app.route('/')
 @app.route('/home/<name>')
 def index(name=None):
 	if not name:
-		name='NoName'
-	user = { 'nickname': name } # fake user
-	return render_template("index.html",
-		leftnavlist = leftnavlist,
-		title = 'Home',
-		user = user)
+		name = 'NoName'
+	user = {'nickname': name}  # fake user
+	return render_template("index.html", leftnavlist=leftnavlist, title='Home', user=user)
+
 
 @app.route('/get_devinfo/<devname>', methods={'GET', 'POST'})
 def get_devinfo(devname=None):
@@ -61,6 +55,7 @@ def get_devinfo(devname=None):
 		return json.dumps(devinfo)
 	else:
 		return '{"message":"no devid"}'
+
 
 @app.route('/deldev/<devname>', methods={'GET', 'POST'})
 def deldev(devname=None):
@@ -76,14 +71,15 @@ def deldev(devname=None):
 				if os.path.isdir("devices/" + devname):
 					shutil.rmtree("devices/" + devname)
 
-				message = {'message': 'del '+devname+' successful'}
+				message = {'message': 'del ' + devname + ' successful'}
 				return json.dumps(message)
 		else:
 			return json.dumps({"message": "no devid"})
 
+
 @app.route('/get_devtags')
 def get_devtags():
-	tags = {'tags':[]}
+	tags = {'tags': []}
 	try:
 		devname = request.args['devname']
 	except Exception as e:
@@ -113,7 +109,6 @@ def get_devtags():
 			return json.dumps(tags)
 
 
-
 @app.route('/adddev/<devname>', methods={'GET', 'POST'})
 def adddev(devname=None):
 	if request.method == 'GET':
@@ -123,8 +118,8 @@ def adddev(devname=None):
 			devinfo = json.loads(request.get_data().decode('utf-8'))
 			print(devinfo)
 			devinfotoredis = devinfo['devinfo']
-			#del devinfotoredis['Protocol_paramter']['extend_parameter']
-			#print(devinfotoredis)
+			# del devinfotoredis['Protocol_paramter']['extend_parameter']
+			# print(devinfotoredis)
 			hr0.hdel('DevsPool_list', devname)
 			hr0.hset('DevsPool_list', devname, json.dumps(devinfotoredis))
 			if os.path.isdir("devices/" + devname):
@@ -136,6 +131,7 @@ def adddev(devname=None):
 			return '{"message":"save successful"}'
 		else:
 			return '{"message":"no devid"}'
+
 
 @app.route('/devpool', methods=('GET', 'POST'))
 def devpool():
@@ -173,7 +169,8 @@ def devpool():
 								dev_manufacturer = cc[0].firstChild.data
 								cc = dom.getElementsByTagName('dev_model')
 								dev_model = cc[0].firstChild.data
-								iodevinfo = {'dev_type': dev_type,'dev_manufacturer': dev_manufacturer,'dev_model': dev_model}
+								iodevinfo = {'dev_type': dev_type, 'dev_manufacturer': dev_manufacturer,
+								             'dev_model': dev_model}
 								extend_parameters = dom.getElementsByTagName("extend_parameter")
 								e_p = []
 								for e in extend_parameters:
@@ -187,36 +184,37 @@ def devpool():
 							protocollist.append(dirname)
 							protocoldict[dirname] = protocol
 							iodevinfodict[dirname] = iodevinfo
-	return render_template('devpool.html', leftnavlist=leftnavlist, title='devpool', devs=devs, protocollist=protocollist, protocoldict=protocoldict, iodevinfodict=iodevinfodict)
-
+	return render_template('devpool.html', leftnavlist=leftnavlist, title='devpool', devs=devs,
+	                       protocollist=protocollist, protocoldict=protocoldict, iodevinfodict=iodevinfodict)
 
 
 @app.route('/acquisition')
 def acquisition():
 	return render_template("acquisition.html", leftnavlist=leftnavlist, title='acquisition')
 
+
 @app.route('/datapush')
 def datapush():
 	return render_template("datapush.html", leftnavlist=leftnavlist, title='datapush')
 
+
 @app.route('/upload/<devname>', methods=('GET', 'POST'))
 def upload(devname=None):
-
 	if request.method == 'POST':
 		if devname:
 			print(devname)
-			print(request.files)
+
 			upload_file = request.files['upfile']
 			if upload_file:
 				fname = secure_filename(upload_file.filename)
 				upload_file.save(os.path.join(uploadpath, fname))
 				print(upload_file.filename, upload_file.content_type)
-				if os.path.isdir("devices/"+devname):
-					print("devices/"+devname,"目录存在，开始移动文件")
-					shutil.move(uploadpath + '/' + upload_file.filename,"devices/"+devname+"/"+devname+".xls")
-					excelbook = xlrd.open_workbook("devices/"+devname+"/"+devname+".xls")
+				if os.path.isdir("devices/" + devname):
+					print("devices/" + devname, "目录存在，开始移动文件")
+					shutil.move(uploadpath + '/' + upload_file.filename, "devices/" + devname + "/" + devname + ".xls")
+					excelbook = xlrd.open_workbook("devices/" + devname + "/" + devname + ".xls")
 				else:
-					print("devices/"+devname+"目录不存在，读取上传路径文件")
+					print("devices/" + devname + "目录不存在，读取上传路径文件")
 					shutil.move(uploadpath + '/' + upload_file.filename, uploadpath + '/' + devname + ".xls")
 					excelbook = xlrd.open_workbook(uploadpath + '/' + devname + ".xls")
 				print("表单数量:", excelbook.nsheets)
@@ -268,10 +266,11 @@ def upload(devname=None):
 			newtags = {'tags': []}
 			return json.dumps(newtags)
 
+
 @app.route('/network', methods=('GET', 'POST'))
 def network():
 	fftags = {'tags': []}
-	#print('@@@@@', os.getcwd())
+	# print('@@@@@', os.getcwd())
 	if request.method == 'GET':
 		return render_template('network.html', leftnavlist=leftnavlist, title='network', newtags=fftags)
 	elif request.method == 'POST':
@@ -280,8 +279,6 @@ def network():
 		upload_file = r['data']
 		print(upload_file)
 		return "200"
-
-
 
 
 @app.route('/downtable/<devname>', methods=('GET', 'POST'))
@@ -302,6 +299,7 @@ def downtable(devname=None):
 		return redirect('/static/downloads/' + devname + '.xls')
 	else:
 		return '未包含设备ID'
+
 
 if __name__ == '__main__':
 	app.run(host="0.0.0.0", port=5000, debug=True)
